@@ -3,9 +3,9 @@
    - La app: primero intenta la red (ves siempre la última versión) y si no hay conexión usa la copia.
    - Las fuentes de Google: usa la copia guardada si la hay.
    - Para forzar a borrar lo viejo en todos los equipos, cambiá el número de VERSION. */
-const VERSION = 'reales-v2';
+const VERSION = 'reales-v3';
 const FONTS = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Figtree:wght@400;500;600&display=swap';
-const BASE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+const BASE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './cotizaciones.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(async c => {
