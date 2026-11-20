@@ -20,9 +20,9 @@ En uno o dos minutos queda en `https://<usuario>.github.io/reales/`.
 
 ## Cotizaciones automáticas
 
-Una acción de GitHub (`.github/workflows/cotizaciones.yml`) corre cada hora `scripts/cotizaciones.mjs`, que actualiza `cotizaciones.json`:
+Una acción de GitHub (`.github/workflows/cotizaciones.yml`) corre cada 15 minutos `scripts/cotizaciones.mjs`, que actualiza `cotizaciones.json`:
 
-- **Dólar REBA (venta):** de [dolarito.ar](https://www.dolarito.ar/cotizacion/dolar/banco/reba), porque reba.com.ar no deja leer su página.
+- **Dólar REBA (venta):** de [dolarito.ar](https://www.dolarito.ar/cotizacion/dolar/banco/reba) e [infodolar.com](https://www.infodolar.com/cotizacion-dolar-entidad-reba.aspx) (la publicación más reciente), porque reba.com.ar no deja leer su página.
 - **1 dólar en reales y 1 real en pesos:** Prex no las publica (solo se ven en su app), así que se usa la cotización de mercado de [open.er-api.com](https://open.er-api.com) más un **ajuste**.
 
 El ajuste se calibra solo: cuando escribís a mano lo que te muestra Prex, la app guarda la diferencia con el mercado (por ejemplo, −5%) y la aplica en las próximas actualizaciones. Si escribís otro valor de REBA, también queda como ajuste.
