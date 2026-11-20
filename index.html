@@ -23,11 +23,12 @@ h1{font:700 22px/1.2 'Bricolage Grotesque',Figtree,sans-serif;margin:0 0 16px;le
 h2{font:700 17px/1.2 'Bricolage Grotesque',Figtree,sans-serif;margin:0 0 12px}
 input,button{font:inherit;color:inherit}
 .hero{position:relative;background:var(--hero);color:var(--heroInk);border-radius:28px;padding:52px clamp(20px,4vw,36px) 28px}
-.hero small{display:block;color:var(--heroMute);font-weight:500;margin-bottom:4px}
-.big{font:700 clamp(40px,10vw,64px)/1 'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.03em;display:flex;align-items:baseline;gap:8px}
+.hero small{display:block;color:var(--heroMute);font-weight:500;margin-bottom:10px;text-align:center}
+/* El monto: una caja más clara, centrada, que se ilumina al escribir. Tocar en cualquier parte enfoca el campo */
+.big{font:700 clamp(44px,12vw,68px)/1 'Bricolage Grotesque',Figtree,sans-serif;letter-spacing:-.03em;display:flex;align-items:baseline;justify-content:center;gap:10px;background:rgba(234,245,240,.08);border-radius:18px;padding:18px 18px 16px;cursor:text;transition:background .15s,box-shadow .15s}
+.big:focus-within{background:rgba(234,245,240,.12);box-shadow:inset 0 0 0 1.5px rgba(234,245,240,.35)}
 .big span{font-size:.45em;color:var(--heroMute);white-space:nowrap}
-.big input{background:transparent;border:0;border-bottom:2px dashed rgba(234,245,240,.25);width:100%;min-width:0;font:inherit;letter-spacing:inherit;padding:0 0 4px;outline:0;color:var(--heroInk)}
-.big input:focus-visible{border-bottom-color:var(--heroInk)}
+.big input{background:transparent;border:0;width:1ch;min-width:1ch;max-width:100%;flex:0 1 auto;text-align:center;font:inherit;letter-spacing:inherit;padding:0;outline:0;color:var(--heroInk)}
 .verdict{margin-top:20px;padding-top:16px;border-top:1px solid rgba(234,245,240,.15);font-size:17px;line-height:1.45}
 .verdict b{color:#fff}
 .verdict .be{display:block;margin-top:8px;font-size:14px;color:var(--heroMute)}
@@ -78,7 +79,7 @@ input,button{font:inherit;color:inherit}
       <button type="button" role="tab" class="fb us" data-m="usd" aria-label="Dólares" title="Dólares"></button>
     </div>
     <small id="q"></small>
-    <div class="big"><span id="sym"></span><input id="amt" inputmode="decimal" autocomplete="off"></div>
+    <label class="big" for="amt"><span id="sym"></span><input id="amt" inputmode="decimal" autocomplete="off"></label>
     <div class="verdict" id="verdict" aria-live="polite"></div>
   </section>
 
@@ -179,14 +180,24 @@ function setMode(m){
   document.querySelectorAll('.tabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.m===m)});
   $('q').textContent=MODES[m].q;$('sym').textContent=MODES[m].sym;
   $('amt').setAttribute('aria-label',MODES[m].q);
-  $('amt').value=num(S.amt[m]);
+  $('amt').value=num(S.amt[m]);fitAmt();
   calc();
 }
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.m)})});
 
 var amt=$('amt');
-amt.addEventListener('input',function(){S.amt[S.mode]=parse(amt.value);save();calc()});
-amt.addEventListener('blur',function(){if(isFinite(S.amt[S.mode]))amt.value=num(S.amt[S.mode])});
+/* el campo mide lo mismo que el número, así queda centrado en la caja */
+var meas=document.createElement('span');meas.setAttribute('aria-hidden','true');
+meas.style.cssText='position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:0';
+document.body.appendChild(meas);
+function fitAmt(){
+  var cs=getComputedStyle(amt);meas.style.font=cs.font;meas.style.letterSpacing=cs.letterSpacing;
+  meas.textContent=amt.value||'0';amt.style.width=Math.ceil(meas.getBoundingClientRect().width+4)+'px';
+}
+amt.addEventListener('input',function(){S.amt[S.mode]=parse(amt.value);save();calc();fitAmt()});
+amt.addEventListener('blur',function(){if(isFinite(S.amt[S.mode]))amt.value=num(S.amt[S.mode]);fitAmt()});
+window.addEventListener('resize',fitAmt);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAmt);
 amt.addEventListener('focus',function(){amt.select()});
 ['usdBrl','brlArs','usdArs'].forEach(function(k){
   var el=$(k);el.value=num(S[k]);
